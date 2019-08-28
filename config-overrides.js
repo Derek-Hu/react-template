@@ -4,6 +4,8 @@ const git = require("git-rev-sync");
 const configurations = require("./config");
 const directoryNamedWebpackPlugin = require('directory-named-webpack-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
+const entries = require('./config-entry');
+const multipleEntry = require('react-app-rewire-multiple-entry')(entries);
 
 const {
   override,
@@ -62,6 +64,7 @@ module.exports = {
         "@radius-lg": "2px"
       }
     }),
+    multipleEntry.addMultiEntry,
     config => {
       const envName = process.env.APP_NAME || 'local';
 
@@ -86,4 +89,6 @@ module.exports = {
       return config;
     }
   ),
+  // Proxy for Multiple Entry HTML Access in Development ENV
+  devServer: overrideDevServer(multipleEntry.addEntryProxy)
 } 
